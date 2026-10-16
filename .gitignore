@@ -1,0 +1,88 @@
+node_modules/
+.env
+pgdata/
+redisdata/
+pdfdata/
+__pycache__/
+*.pyc
+*.log
+*.pid
+.chatbot-state.json
+.push-state.json
+creds/
+*-profile/
+*.session.json
+*.creds.json
+.apply-runs/
+*.out
+*.err
+.DS_Store
+Thumbs.db
+app/jobcenter/build/
+app/jobcenter/.dart_tool/
+.dart_tool/
+.flutter-plugins*
+.pub-cache/
+*.apk
+*.aab
+android/key.properties
+android/app/upload-keystore.jks
+android/app/*.jks
+
+# Dead code quarantined 2026-09-25 (auto-apply freeze + cleanup).
+# Contains PLAINTEXT CREDENTIALS and hardcoded session cookies (cf_clearance /
+# PHPSESSID) in the aerocontact family. Never commit. Delete once rotated.
+_dead/
+
+# ---- Portfolio / public-release exclusions (2026-08-08) ----
+# Personal CV & letter material: real name, phone, email, address.
+CV/
+Cover_Letter/
+docs/
+tailored/linkedin_kb.json
+tailored/github_kb.json
+tailored/*.log
+tailored/out-*.log
+
+# Personalised LaTeX CV/letter generator, its payloads and build outputs.
+# The generator hardcodes the author's profile, location, dates and prose.
+tailored/gen_tailored.py
+tailored/test_gen_tailored.py
+tailored/*payload.json
+tailored/out-*/
+
+# Legacy Firebase-based seed scripts (reference personal files/Firebase project).
+app/daemon/seed.js
+app/daemon/seed-current.js
+app/daemon/seed-original.js
+
+# Firebase project config for the Android app (contains API key).
+app/jobcenter/android/app/google-services.json
+
+# Internal agent/working docs (local machine paths, agent instructions).
+AGENTS.md
+RULES.md
+.opencode/
+
+# Third-party LaTeX CV templates (no license file) + scraped data dump.
+Resume_Template_by_Orest/
+offers.json
+
+# Scratch files.
+tmp_*
+*.tsv
+*_dead/
+
+# Local runtime state.
+app/daemon/.hunt-cache.json
+app/daemon/.chatbot-state.json*
+app/daemon/.dedupe-*.json
+app/daemon/.fleet-*.json
+app/daemon/.relevance-audit-state.json
+app/daemon/events-*.log
+dashboard/events-*.log
+*.bak
+*.bak-*
+
+# Build output (Flutter android/ios/etc).
+build/

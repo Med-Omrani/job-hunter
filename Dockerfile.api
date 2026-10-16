@@ -1,0 +1,13 @@
+FROM node:24-alpine AS base
+RUN apk add --no-cache wget bash
+# TeX Live not needed in API container — gen_tailored.py runs on host via task-worker.docker.js with Python + MiKTeX host. Fonts are volume-mounted.
+WORKDIR /app
+COPY api/package.json api/package-lock.json* ./
+RUN npm ci --omit=dev --ignore-scripts || npm install --omit=dev --ignore-scripts
+COPY api/ ./api/
+COPY tailored/ ./tailored/
+COPY CV/ ./CV/
+COPY Cover_Letter/ ./Cover_Letter/
+COPY scripts/ ./scripts/
+EXPOSE 3000
+CMD ["node", "api/server.js"]

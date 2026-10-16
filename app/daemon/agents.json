@@ -1,0 +1,192 @@
+{
+  "watchdog": {
+    "file": "monitor.js",
+    "args": []
+  },
+  "fleet": {
+    "file": "hunter-fleet.js",
+    "args": [],
+    "env": {
+      "FLEET_CONCURRENCY": "8",
+      "FLEET_HOST_GAP_MS": "500",
+      "FLEET_HOST_DAILY_BUDGET": "150000",
+      "FLEET_HTTP_TIMEOUT_MS": "60000",
+      "RELEVANCE_BAND": "1",
+      "RELEVANCE_BAND_MIN_DESC": "200",
+      "RELEVANCE_BAND_ENRICH_MAX": "40",
+      "RELEVANCE_BAND_MAX_PER_SOURCE": "25"
+    }
+  },
+  "relevance": {
+    "file": "relevance-worker.js",
+    "args": [],
+    "enabled": true,
+    "env": {
+      "RELEVANCE_BATCH": "25",
+      "RELEVANCE_INTERVAL_MS": "120000",
+      "RELEVANCE_MAX_TRIES": "3",
+      "RELEVANCE_BATCH_PAUSE_MS": "1500",
+      "RELEVANCE_TOKEN_BUDGET": "6500",
+      "RELEVANCE_TIER0_GATE": "1",
+      "RELEVANCE_GATE_CLAIM_MULT": "6"
+    }
+  },
+  "sagemcom": {
+    "file": "hunter-agent.js",
+    "args": [
+      "sagemcom"
+    ],
+    "enabled": false
+  },
+  "keejob": {
+    "file": "hunter-agent.js",
+    "args": [
+      "keejob"
+    ],
+    "enabled": false
+  },
+  "jobijoba": {
+    "file": "hunter-agent.js",
+    "args": [
+      "jobijoba"
+    ],
+    "enabled": false
+  },
+  "linkedin": {
+    "file": "hunter-agent.js",
+    "args": [
+      "linkedin"
+    ],
+    "enabled": false
+  },
+  "tanitjobs": {
+    "file": "hunter-agent.js",
+    "args": [
+      "tanitjobs"
+    ],
+    "enabled": false
+  },
+  "tunisiejob": {
+    "file": "hunter-agent.js",
+    "args": [
+      "tunisiejob"
+    ],
+    "enabled": false
+  },
+  "capgemini-tn": {
+    "file": "hunter-agent.js",
+    "args": [
+      "capgemini-tn"
+    ],
+    "enabled": false
+  },
+  "capgemini-fr": {
+    "file": "hunter-agent.js",
+    "args": [
+      "capgemini-fr"
+    ],
+    "enabled": false
+  },
+  "stmicro": {
+    "file": "hunter-agent.js",
+    "args": [
+      "stmicro"
+    ],
+    "enabled": false
+  },
+  "talan": {
+    "file": "hunter-agent.js",
+    "args": [
+      "talan"
+    ],
+    "enabled": false
+  },
+  "airbus": {
+    "file": "hunter-agent.js",
+    "args": [
+      "airbus"
+    ],
+    "enabled": false
+  },
+  "thales": {
+    "file": "hunter-agent.js",
+    "args": [
+      "thales"
+    ],
+    "enabled": false
+  },
+  "nxp": {
+    "file": "hunter-agent.js",
+    "args": [
+      "nxp"
+    ],
+    "enabled": false
+  },
+  "continental": {
+    "file": "hunter-agent.js",
+    "args": [
+      "continental"
+    ],
+    "enabled": false
+  },
+  "experteer": {
+    "file": "hunter-agent.js",
+    "args": [
+      "experteer"
+    ],
+    "enabled": false
+  },
+  "remotive": {
+    "file": "hunter-agent.js",
+    "args": [
+      "remotive"
+    ],
+    "enabled": false
+  },
+  "remoteok": {
+    "file": "hunter-agent.js",
+    "args": [
+      "remoteok"
+    ],
+    "enabled": false
+  },
+  "hotline": {
+    "file": "hotline-server.docker.js",
+    "args": []
+  },
+  "worker": {
+    "file": "task-worker.docker.js",
+    "args": []
+  },
+  "chatbot": {
+    "file": "chat-bot.docker.js",
+    "args": []
+  },
+  "relevance-audit": {
+    "file": "relevance-audit.js",
+    "args": [
+      "--loop"
+    ],
+    "enabled": true,
+    "env": {
+      "RELEVANCE_AUDIT_DAYS": "7",
+      "RELEVANCE_AUDIT_INTERVAL_MS": "86400000"
+    }
+  },
+  "discover": {
+    "file": "discover-agent.js",
+    "args": [],
+    "enabled": true,
+    "env": {
+      "DISCOVER": "1",
+      "DISCOVER_CAP": "25",
+      "DISCOVER_CONC": "3",
+      "DISCOVER_INTERVAL_MS": "21600000",
+      "DISCOVER_SNAPSHOTS": "1"
+    }
+  },
+  "dashboard": {
+    "file": "../../dashboard/serve.js",
+    "args": []
+  }
+}

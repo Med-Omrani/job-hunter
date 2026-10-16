@@ -1,0 +1,68 @@
+[
+ {
+  "id": "tn-stmicroelectronics-unverified",
+  "company": "STMicroelectronics",
+  "domain": "st.com",
+  "country": "TN",
+  "sector": "embarque",
+  "type": "eightfold",
+  "token": "stmicroelectronics",
+  "discovered": true,
+  "foundBy": "fingerprint"
+ },
+ {
+  "id": "tn-airbus-unverified",
+  "company": "Airbus",
+  "domain": "airbus.com",
+  "country": "TN",
+  "sector": "embarque",
+  "type": "workday",
+  "token": "ag",
+  "discovered": true,
+  "foundBy": "fingerprint"
+ },
+ {
+  "id": "tn-airbus-unverified",
+  "company": "Airbus",
+  "domain": "airbus.com",
+  "country": "TN",
+  "sector": "embarque",
+  "type": "workday",
+  "token": "ag",
+  "discovered": true,
+  "foundBy": "fingerprint"
+ },
+ {
+  "id": "tn-airbus-unverified",
+  "company": "Airbus",
+  "domain": "airbus.com",
+  "country": "TN",
+  "sector": "embarque",
+  "type": "workday",
+  "token": "ag",
+  "discovered": true,
+  "foundBy": "fingerprint"
+ },
+ {
+  "id": "tn-assystem-unverified",
+  "company": "Assystem",
+  "domain": "assystem.com",
+  "country": "TN",
+  "sector": "services",
+  "type": "smartrecruiters",
+  "token": "oneclick-ui",
+  "discovered": true,
+  "foundBy": "fingerprint"
+ },
+ {
+  "id": "tn-valeo-unverified",
+  "company": "Valeo",
+  "domain": "valeo.com",
+  "country": "TN",
+  "sector": "services",
+  "type": "workday",
+  "token": "valeo",
+  "discovered": true,
+  "foundBy": "fingerprint"
+ }
+]

@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JobCenter — Dashboard</title>
+<style>
+:root{
+  --bg:#0e1116;--panel:#161a22;--panel2:#1c212b;--line:#262c38;--txt:#e6e9ef;--dim:#8b93a3;
+  --acc:#4f8cff;--ok:#2fbf71;--warn:#e8b02f;--bad:#e05252;--score0:#5b6270;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--txt);font:14px/1.45 "Segoe UI",system-ui,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+header{display:flex;align-items:center;gap:16px;padding:10px 18px;background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.brand{font-weight:700;font-size:16px;letter-spacing:.3px}
+.brand .sub{color:var(--dim);font-weight:400;font-size:12px;margin-left:6px}
+.tasks{flex:1;min-width:0;display:flex;gap:8px;align-items:center;overflow:hidden}
+.tasks .pill{background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:420px}
+.tasks .pill.run{border-color:var(--acc);color:#bcd4ff}
+.health{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--dim)}
+#hdot{width:9px;height:9px;border-radius:50%;background:var(--bad);display:inline-block}
+#hdot.on{background:var(--ok)}
+nav{display:flex;gap:4px;padding:8px 18px 0;background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:49px;z-index:4}
+nav button{background:none;border:none;border-bottom:2px solid transparent;padding:8px 16px;cursor:pointer;color:var(--dim);border-radius:6px 6px 0 0}
+nav button.active{color:var(--txt);border-bottom-color:var(--acc);background:var(--bg)}
+nav .spacer{flex:1}
+nav .meta{align-self:center;font-size:12px;color:var(--dim)}
+main{padding:16px 18px 40px}
+.tab{display:none}
+.tab.active{display:block}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;align-items:center}
+.toolbar input[type=search]{flex:1;min-width:220px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;outline:none}
+.toolbar input[type=search]:focus{border-color:var(--acc)}
+.seg{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{background:none;border:none;padding:8px 14px;cursor:pointer;color:var(--dim)}
+.seg button.active{background:var(--acc);color:#fff}
+.toolbar select{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px;cursor:pointer}
+.split{display:flex;gap:16px;align-items:flex-start}
+.list{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px;cursor:pointer;display:flex;gap:12px;transition:border-color .12s}
+.card:hover{border-color:#3a4152}
+.card.sel{border-color:var(--acc)}
+.card.seen{opacity:.72}
+.score{min-width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;background:var(--score0);color:#fff;flex:none}
+.score.s3{background:#2fbf71}.score.s4{background:#1f9e5e}.score.s5{background:#178a50}.score.s1,.score.s2{background:#a07e1f}
+.card .t{flex:1;min-width:0}
+.card .ti{font-weight:600;margin-bottom:2px}
+.card .meta{color:var(--dim);font-size:12px;display:flex;flex-wrap:wrap;gap:8px}
+.card .right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex:none}
+.chip{font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--dim);white-space:nowrap}
+.chip.match{border-color:#1f9e5e;color:#7fe0b0}
+.chip.tailor{border-color:var(--acc);color:#bcd4ff;cursor:pointer}
+.chip.st-applied{border-color:var(--acc);color:#bcd4ff}
+.chip.st-archived{border-color:#555;color:#999}
+.chip.st-dismissed{border-color:var(--bad);color:#f0a0a0}
+.chip.st-saved{border-color:var(--warn);color:#f0d79a}
+.chip.newdot{background:#22304d;border-color:transparent;color:#9fc0ff}
+#more{margin-top:4px;background:var(--panel);border:1px dashed var(--line);border-radius:10px;padding:10px;color:var(--dim);cursor:pointer}
+#more:hover{border-color:var(--acc);color:var(--txt)}
+.detail{width:440px;flex:none;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;position:sticky;top:110px;max-height:calc(100vh - 130px);overflow:auto}
+.detail.hidden{display:none}
+.detail h2{margin:0 0 6px;font-size:17px;line-height:1.3}
+.detail .dmeta{color:var(--dim);font-size:12.5px;margin-bottom:10px;display:flex;flex-wrap:wrap;gap:10px}
+.detail .kw{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.detail .kw span{font-size:11px;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:2px 7px;color:var(--dim)}
+.detail .desc{white-space:pre-wrap;font-size:13px;color:#c9cfda;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:12px;max-height:340px;overflow:auto;margin:10px 0}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.btn{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 14px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;color:var(--txt)}
+.btn:hover{border-color:#3a4152}
+.btn.primary{background:var(--acc);border-color:var(--acc);color:#fff}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.danger{border-color:#5a2f2f;color:#f0a0a0}
+.btn:disabled{opacity:.5;cursor:default}
+.actions select{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.close{float:right;background:none;border:none;color:var(--dim);cursor:pointer;font-size:18px;line-height:1}
+.empty{color:var(--dim);text-align:center;padding:50px 0}
+.docs{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px}
+.doc{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.doc .dn{font-weight:600;margin-bottom:4px}
+.doc .dm{color:var(--dim);font-size:12px;margin-bottom:10px}
+.doc .actions{margin-top:0}
+.chatwrap{display:flex;flex-direction:column;height:calc(100vh - 170px);background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.chatbar{display:flex;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line);align-items:center}
+.chatbar .seg button{padding:6px 14px}
+.chatlog{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px}
+.msg{max-width:72%;padding:8px 12px;border-radius:12px;white-space:pre-wrap;word-break:break-word;font-size:13.5px}
+.msg.user{align-self:flex-end;background:var(--acc);color:#fff;border-bottom-right-radius:4px}
+.msg.agent{align-self:flex-start;background:var(--panel2);border:1px solid var(--line);border-bottom-left-radius:4px}
+.msg .ts{display:block;font-size:10px;opacity:.6;margin-top:4px}
+.composer{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line)}
+.composer input{flex:1;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:9px 12px;outline:none}
+.composer input:focus{border-color:var(--acc)}
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#232a37;border:1px solid var(--line);border-radius:10px;padding:10px 18px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:50;max-width:70vw}
+#toast.show{opacity:1}
+.spin{display:inline-block;width:11px;height:11px;border:2px solid var(--acc);border-top-color:transparent;border-radius:50%;animation:sp 1s linear infinite;vertical-align:-2px;margin-right:6px}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (max-width:1100px){.split{flex-direction:column}.detail{position:static;width:100%;max-height:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">JobCenter<span class="sub">dashboard PC</span></div>
+  <div class="tasks" id="tasks"></div>
+  <div class="health"><span id="hdot"></span>API</div>
+</header>
+<nav>
+  <button data-tab="offers" class="active">Offres</button>
+  <button data-tab="docs">Docs</button>
+  <button data-tab="chat">Chat</button>
+  <span class="spacer"></span>
+  <span class="meta" id="totals"></span>
+</nav>
+<main>
+
+<section id="tab-offers" class="tab active">
+  <div class="toolbar">
+    <input id="q" type="search" placeholder="Rechercher titre, entreprise, mot-clé…">
+    <div class="seg" id="modeseg">
+      <button data-mode="all" class="active">Tous</button>
+      <button data-mode="match">Correspond</button>
+      <button data-mode="unseen">Non vues</button>
+    </div>
+    <select id="sort">
+      <option value="updated_at">Plus récentes</option>
+      <option value="score">Score</option>
+      <option value="seen_at">Vu le</option>
+      <option value="company">Entreprise</option>
+    </select>
+    <select id="f-country"><option value="">Pays…</option></select>
+    <select id="f-contract"><option value="">Contrat…</option></select>
+    <select id="f-source"><option value="">Source…</option></select>
+  </div>
+  <div class="split">
+    <div class="list">
+      <div id="offers"></div>
+      <button id="more" hidden>Charger plus</button>
+    </div>
+    <aside id="detail" class="detail hidden"></aside>
+  </div>
+</section>
+
+<section id="tab-docs" class="tab">
+  <div class="toolbar">
+    <input id="dq" type="search" placeholder="Filtrer par nom, type, référence…">
+    <button class="btn" id="drefresh">Rafraîchir</button>
+  </div>
+  <div class="docs" id="docs"></div>
+  <div class="empty" id="docs-empty" hidden>Aucun document.</div>
+</section>
+
+<section id="tab-chat" class="tab">
+  <div class="chatwrap">
+    <div class="chatbar">
+      <div class="seg" id="chchan">
+        <button data-ch="main" class="active">Agent (main)</button>
+        <button data-ch="hotline">Hotline</button>
+      </div>
+      <span class="meta" id="chat-meta" style="color:var(--dim);font-size:12px"></span>
+    </div>
+    <div class="chatlog" id="chatlog"></div>
+    <form class="composer" id="chform">
+      <input id="chtext" placeholder="Écrire un message… (« adapter &lt;ref&gt; » pour une offre)" autocomplete="off">
+      <button class="btn primary" type="submit">Envoyer</button>
+    </form>
+  </div>
+</section>
+
+</main>
+<div id="toast"></div>
+<script>
+'use strict';
+const $ = (s) => document.querySelector(s);
+const state = {
+  tab: 'offers',
+  mode: 'all', q: '', sort: 'updated_at',
+  country: '', contract: '', source: '',
+  offset: 0, hasMore: false, total: 0,
+  items: [], selId: null,
+  docs: [], tasks: [], taskSig: '',
+  chan: 'main', chatIds: new Set(), chatDirty: false,
+};
+
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast._h); toast._h = setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+async function api(path, opts) {
+  const res = await fetch(path, opts);
+  if (!res.ok) {
+    let m = res.status + '';
+    try { const j = await res.json(); if (j && j.error) m += ' ' + j.error; } catch (_) {}
+    throw new Error(m);
+  }
+  return res.json();
+}
+function post(path, body) {
+  return api(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) });
+}
+function patch(path, body) {
+  return api(path, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) });
+}
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function ago(iso) {
+  if (!iso) return '';
+  const d = (Date.now() - new Date(iso).getTime()) / 1000;
+  if (d < 90) return "à l'instant";
+  if (d < 3600) return 'il y a ' + Math.round(d / 60) + ' min';
+  if (d < 86400) return 'il y a ' + Math.round(d / 3600) + ' h';
+  return 'il y a ' + Math.round(d / 86400) + ' j';
+}
+
+document.querySelectorAll('nav button[data-tab]').forEach((b) => b.addEventListener('click', () => switchTab(b.dataset.tab)));
+function switchTab(tab) {
+  state.tab = tab;
+  document.querySelectorAll('nav button[data-tab]').forEach((b) => b.classList.toggle('active', b.dataset.tab === tab));
+  document.querySelectorAll('.tab').forEach((s) => s.classList.toggle('active', s.id === 'tab-' + tab));
+  if (tab === 'docs') loadDocs();
+  if (tab === 'chat') { state.chatDirty = true; renderChat(); }
+}
+
+async function loadFacets() {
+  try {
+    const f = await api('/api/offers/facets');
+    const fill = (sel, arr, keep) => {
+      const el = $(sel);
+      const cur = el.value;
+      el.innerHTML = keep + arr.slice(0, 40).map((x) => `<option value="${esc(x.value)}">${esc(x.value)} (${x.count})</option>`).join('');
+      el.value = cur;
+    };
+    fill('#f-country', f.countries || [], '<option value="">Pays…</option>');
+    fill('#f-contract', f.contracts || [], '<option value="">Contrat…</option>');
+    fill('#f-source', f.sources || [], '<option value="">Source…</option>');
+    $('#totals').textContent = f.seenTotal != null ? f.seenTotal + ' vues' : '';
+  } catch (_) {}
+}
+
+function searchParams() {
+  const p = new URLSearchParams({ fields: 'list', limit: '30', offset: String(state.offset), sort: state.sort });
+  if (state.mode === 'match') p.set('matchOnly', '1');
+  if (state.mode === 'unseen') p.set('unseenOnly', '1');
+  if (state.q) p.set('q', state.q);
+  if (state.country) p.set('country', state.country);
+  if (state.contract) p.set('contract', state.contract);
+  if (state.source) p.set('sourceId', state.source);
+  return p;
+}
+
+async function loadOffers(reset) {
+  if (reset) { state.offset = 0; state.items = []; }
+  try {
+    const r = await api('/api/offers/search?' + searchParams());
+    state.items = reset ? r.items : state.items.concat(r.items);
+    state.hasMore = r.hasMore; state.total = r.total;
+    renderOffers();
+  } catch (e) { toast('Offres : ' + e.message); }
+}
+
+function scoreClass(s) { return 'score s' + (Number(s) >= 5 ? 5 : Number(s)); }
+function statusChip(o) {
+  const st = o.status && o.status !== 'new' ? o.status : '';
+  if (!st) return '';
+  const lbl = { applied: 'Postulée', saved: 'Sauvegardée', dismissed: 'Écartée', archived: 'Archivée', not_interested: 'Pas intéressé' }[st] || st;
+  return `<span class="chip st-${esc(st)}">${esc(lbl)}</span>`;
+}
+
+function renderOffers() {
+  const box = $('#offers');
+  if (!state.items.length) { box.innerHTML = '<div class="empty">Aucune offre pour ces filtres.</div>'; $('#more').hidden = true; return; }
+  box.innerHTML = state.items.map((o) => {
+    const seen = !!o.seenAt;
+    const sc = o.score == null ? '–' : o.score;
+    const tailor = o.tailorStatus === 'ready' ? '<span class="chip tailor" data-docs="' + esc(o.ref || o.id) + '">CV+Lettre prêts</span>'
+      : (o.tailorStatus === 'pending' || o.tailorStatus === 'running') ? '<span class="chip tailor">Adaptation…</span>' : '';
+    return `<div class="card${seen ? ' seen' : ''}${o.id === state.selId ? ' sel' : ''}" data-id="${esc(o.id)}">
+      <div class="${scoreClass(sc)}">${sc}</div>
+      <div class="t">
+        <div class="ti">${esc(o.title || '(sans titre)')}</div>
+        <div class="meta"><span>${esc(o.company || '')}</span><span>${esc(o.location || '')}</span>${o.contract ? '<span>' + esc(o.contract) + '</span>' : ''}<span>${esc(ago(o.updated_at))}</span></div>
+      </div>
+      <div class="right">${o.match ? '<span class="chip match">Correspond</span>' : ''}${tailor}${statusChip(o)}${seen ? '' : '<span class="chip newdot">nouvelle</span>'}</div>
+    </div>`;
+  }).join('');
+  $('#more').hidden = !state.hasMore;
+  box.querySelectorAll('.card').forEach((c) => c.addEventListener('click', (e) => {
+    const d = e.target.closest('[data-docs]');
+    if (d) { switchTab('docs'); $('#dq').value = d.dataset.docs; renderDocs(); return; }
+    openDetail(c.dataset.id);
+  }));
+}
+
+$('#more').addEventListener('click', () => { state.offset += 30; loadOffers(false); });
+
+document.querySelectorAll('#modeseg button').forEach((b) => b.addEventListener('click', () => {
+  state.mode = b.dataset.mode;
+  document.querySelectorAll('#modeseg button').forEach((x) => x.classList.toggle('active', x === b));
+  loadOffers(true);
+}));
+$('#sort').addEventListener('change', () => { state.sort = $('#sort').value; loadOffers(true); });
+['country', 'contract', 'source'].forEach((k) => $('#f-' + k).addEventListener('change', (e) => { state[k] = e.target.value; loadOffers(true); }));
+let qt;
+$('#q').addEventListener('input', () => { clearTimeout(qt); qt = setTimeout(() => { state.q = $('#q').value.trim(); loadOffers(true); }, 300); });
+
+async function openDetail(id) {
+  state.selId = id; renderOffers();
+  const d = $('#detail'); d.classList.remove('hidden');
+  d.innerHTML = '<div class="empty">Chargement…</div>';
+  try {
+    const o = await api('/api/offers/' + encodeURIComponent(id));
+    if (state.selId !== id) return;
+    const ref = o.ref || o.id;
+    const link = o.link || o.applyUrl || '';
+    const kw = (o.keywords || []).slice(0, 14);
+    d.innerHTML = `
+      <button class="close" id="dclose">×</button>
+      <div class="${scoreClass(o.score == null ? '–' : o.score)}" style="margin-bottom:8px">${o.score == null ? '–' : o.score}</div>
+      <h2>${esc(o.title || '')}</h2>
+      <div class="dmeta"><span>${esc(o.company || '')}</span><span>${esc(o.location || '')}</span>${o.contract ? '<span>' + esc(o.contract) + '</span>' : ''}<span>${esc(o.source || '')}</span><span>${esc(ago(o.updated_at))}</span></div>
+      <div class="kw">${kw.map((k) => '<span>' + esc(k) + '</span>').join('')}</div>
+      <div class="desc">${esc(o.description || '(pas de description)')}</div>
+      <div class="actions">
+        <button class="btn primary" id="dadapter">Adapter CV &amp; lettre</button>
+        <select id="dtpl" title="Modèle de CV">
+          <option value="">CV (défaut)</option>
+          <option value="cv pro">CV Pro</option>
+        </select>
+        ${link ? `<a class="btn" href="${esc(link)}" target="_blank" rel="noopener">Voir l'offre ↗</a>` : ''}
+        <select id="dst">
+          ${[['new', 'Nouvelle'], ['saved', 'Sauvegardée'], ['applied', 'Postulée'], ['dismissed', 'Écartée'], ['archived', 'Archivée']]
+            .map(([v, l]) => `<option value="${v}"${(o.status || 'new') === v ? ' selected' : ''}>${l}</option>`).join('')}
+        </select>
+        ${o.tailorStatus === 'ready' ? `<button class="btn" id="ddocs">Documents prêts</button>` : ''}
+      </div>
+      ${o.tailorStatus === 'ready' && o.tailoredOfferRef ? '<div class="dmeta" style="margin-top:10px"><span>Réf. adaptée : ' + esc(o.tailoredOfferRef) + '</span></div>' : ''}
+    `;
+    post('/api/offers/' + encodeURIComponent(id) + '/seen').then(() => {
+      const cur = state.items.find((x) => x.id === id);
+      if (cur && !cur.seenAt) { cur.seenAt = new Date().toISOString(); renderOffers(); }
+    }).catch(() => {});
+    $('#dclose').addEventListener('click', () => { state.selId = null; d.classList.add('hidden'); renderOffers(); });
+    $('#dadapter').addEventListener('click', async () => {
+      const tpl = ($('#dtpl') || {}).value || '';
+      try {
+        await post('/api/chat/messages', { text: 'Adapter documents pour ' + ref + ' ' + (o.title || '') + (tpl ? ' ' + tpl : ''), channel: 'main', sender: 'user' });
+        toast('Demande d\'adaptation envoyée à l\'agent' + (tpl ? ' (modèle CV Pro)' : '') + ' — suivi dans Chat / Tâches.');
+      } catch (e) { toast('Échec : ' + e.message); }
+    });
+    const dd = $('#ddocs');
+    if (dd) dd.addEventListener('click', () => { switchTab('docs'); $('#dq').value = ref; renderDocs(); });
+    $('#dst').addEventListener('change', async (e) => {
+      try {
+        await patch('/api/offers/' + encodeURIComponent(id) + '/status', { status: e.target.value });
+        const cur = state.items.find((x) => x.id === id);
+        if (cur) { cur.status = e.target.value; renderOffers(); }
+        toast('Statut mis à jour.');
+      } catch (err) { toast('Échec : ' + err.message); }
+    });
+  } catch (e) { d.innerHTML = '<div class="empty">Erreur : ' + esc(e.message) + '</div>'; }
+}
+
+async function loadDocs() {
+  try {
+    state.docs = await api('/api/docs');
+    renderDocs();
+  } catch (e) { toast('Docs : ' + e.message); }
+}
+function renderDocs() {
+  const q = ($('#dq').value || '').toLowerCase();
+  const rows = state.docs.filter((d) => !q || String(d.name || d.id).toLowerCase().includes(q) || String(d.offerRef || '').toLowerCase().includes(q) || String(d.type || '').toLowerCase().includes(q));
+  $('#docs-empty').hidden = rows.length > 0;
+  $('#docs').innerHTML = rows.map((d) => `
+    <div class="doc">
+      <div class="dn">${esc(d.name || d.id)}</div>
+      <div class="dm">${esc(d.type || '')} ${d.offerRef ? '· ' + esc(d.offerRef) : ''} · ${esc(ago(d.updated_at))}</div>
+      <div class="actions">
+        <a class="btn primary" href="/api/docs/${encodeURIComponent(d.id)}/pdf" target="_blank" rel="noopener">Ouvrir le PDF</a>
+        <button class="btn danger" data-del="${esc(d.id)}">Supprimer</button>
+      </div>
+    </div>`).join('');
+  $('#docs').querySelectorAll('[data-del]').forEach((b) => b.addEventListener('click', async () => {
+    if (!confirm('Supprimer ce document ?')) return;
+    try { await api('/api/docs/' + encodeURIComponent(b.dataset.del), { method: 'DELETE' }); loadDocs(); toast('Document supprimé.'); }
+    catch (e) { toast('Échec : ' + e.message); }
+  }));
+}
+$('#dq').addEventListener('input', renderDocs);
+$('#drefresh').addEventListener('click', loadDocs);
+
+const ACTIVE_TASK = ['queued', 'in_progress'];
+async function loadTasks() {
+  try {
+    const all = await api('/api/tasks?limit=40');
+    const act = all.filter((t) => ACTIVE_TASK.includes(t.status));
+    const sig = act.map((t) => t.id + ':' + t.status).join(',');
+    const doneNow = state.taskSig && sig !== state.taskSig && act.length < (state.taskSig.split(',').filter(Boolean).length);
+    state.tasks = act; state.taskSig = sig;
+    $('#tasks').innerHTML = act.length
+      ? `<span class="pill run"><span class="spin"></span>${act.length} tâche${act.length > 1 ? 's' : ''} en cours — ${esc(String(act[0].request || '').slice(0, 90))}</span>`
+      : '';
+    if (doneNow) {
+      toast('Une tâche est terminée — documents actualisés.');
+      if (state.tab === 'docs') loadDocs();
+      if (state.selId) openDetail(state.selId);
+    }
+  } catch (_) {}
+}
+
+async function loadChat() {
+  try {
+    const msgs = await api('/api/chat/messages?channel=' + encodeURIComponent(state.chan) + '&limit=200');
+    let added = false;
+    for (const m of msgs) {
+      if (!state.chatIds.has(m.id)) { state.chatIds.add(m.id); added = true; }
+    }
+    state.msgs = msgs;
+    if (added) state.chatDirty = true;
+    if (state.tab === 'chat') renderChat();
+  } catch (_) {}
+}
+function renderChat() {
+  if (!state.chatDirty || state.tab !== 'chat') return;
+  state.chatDirty = false;
+  const log = $('#chatlog');
+  const atBottom = log.scrollHeight - log.scrollTop - log.clientHeight < 80;
+  const msgs = state.msgs || [];
+  log.innerHTML = msgs.map((m) => `
+    <div class="msg ${m.sender === 'user' ? 'user' : 'agent'}">${esc(m.text)}<span class="ts">${esc(m.sender)} · ${esc(new Date(m.createdAt).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }))}</span></div>`).join('')
+    || '<div class="empty">Aucun message.</div>';
+  if (atBottom) log.scrollTop = log.scrollHeight;
+}
+document.querySelectorAll('#chchan button').forEach((b) => b.addEventListener('click', () => {
+  state.chan = b.dataset.ch;
+  state.chatIds = new Set(); state.msgs = []; state.chatDirty = true;
+  document.querySelectorAll('#chchan button').forEach((x) => x.classList.toggle('active', x === b));
+  $('#chat-meta').textContent = 'chargement…';
+  loadChat();
+}));
+$('#chform').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const text = $('#chtext').value.trim();
+  if (!text) return;
+  $('#chtext').value = '';
+  try {
+    await post('/api/chat/messages', { text, channel: state.chan, sender: 'user' });
+    state.chatDirty = true;
+    await loadChat(); renderChat();
+  } catch (err) { toast('Échec : ' + err.message); }
+});
+
+async function health() {
+  try { await api('/api/health'); $('#hdot').classList.add('on'); }
+  catch (_) { $('#hdot').classList.remove('on'); }
+}
+
+let chatMiss = 0;
+function loop() {
+  loadTasks();
+  health();
+  if (state.tab === 'chat') {
+    loadChat().then(() => { chatMiss = 0; $('#chat-meta').textContent = (state.msgs || []).length + ' messages'; }).catch(() => { chatMiss++; });
+  }
+}
+loadFacets();
+loadOffers(true);
+loop();
+setInterval(loop, 3000);
+setInterval(loadDocs, 30000);
+</script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+# Build context for Dockerfile.api.
+# The image needs ONLY: api/  tailored/  CV/  Cover_Letter/  scripts/
+# Everything below is secrets, copied browser profiles, logs, dead code or local
+# state. With `context: .` in docker-compose.yml, without this file all of it was
+# being sent to the Docker daemon and baked into image layers on every build.
+
+# ---------------------------------------------------------------- secrets
+.env
+.env.*
+*.env
+**/creds/
+creds/
+*service-account*.json
+*.creds.json
+*.session.json
+.opencode/
+**/.opencode/
+
+# ------------------------------------------- copied browser user-data dirs
+# These are Chrome profiles. Each one carries Default/Login Data (the saved
+# password database), Default/Web Data and Default/History, i.e. real
+# credentials and real browsing history. They must never enter an image.
+# Note: apply-driver.js and linkedin-bot.js resolve these at runtime on the
+# host, so excluding them here does not affect the host-side daemon.
+*-profile/
+**/*-profile/
+*-autopostule-profile/
+
+# ------------------------------------------------- dead code and scratch
+_dead/
+.apply-runs/
+
+# ------------------------------------- logs, pid files, local run artefacts
+*.log
+*.pid
+*.out
+*.err
+.chatbot-state.json
+
+# ----------------------------------------------------- runtime data volumes
+pdfdata/
+pgdata/
+redisdata/
+
+# ------------------------------------------------------------------ caches
+node_modules/
+**/node_modules/
+.git/
+.gitignore
+.dockerignore
+.DS_Store
+Thumbs.db
+
+# ------------------------------------------------- flutter / android builds
+app/jobcenter/build/
+app/jobcenter/.dart_tool/
+.dart_tool/
+.flutter-plugins*
+.pub-cache/
+*.apk
+*.aab
+android/key.properties
+android/app/*.jks

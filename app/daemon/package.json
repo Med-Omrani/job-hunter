@@ -1,0 +1,1 @@
+{"name":"jobcenter-docker-daemons","version":"2.0.0","private":true,"dependencies":{"firebase-admin":"^14.4.0","playwright":"^1.63.0"},"main":"monitor.js","scripts":{"test":"echo \"Error: no test specified\" && exit 1"},"keywords":[],"author":"","license":"ISC","description":"JobCenter Docker daemons — Firebase-free (hunters, task worker, chat bot, apply worker)"}
