@@ -1,17 +1,40 @@
-# jobcenter
+# JobHunter — Flutter app
 
-A new Flutter project.
+The mobile client of [JobHunter](../..). It talks to the self-hosted backend over the REST
+API (and WebSocket) rather than any third-party service.
 
-## Getting Started
+## Screens
 
-This project is a starting point for a Flutter application.
+| File | Purpose |
+| --- | --- |
+| `lib/screens/offers_screen.dart` | Offers board: search, facets, groups, status |
+| `lib/screens/offer_detail.dart` | Offer detail + apply sheet |
+| `lib/screens/docs_screen.dart` | Generated CV/letter PDFs (open/share) |
+| `lib/screens/chat_screen.dart` | Chat with the system / AI assistant |
+| `lib/screens/hotline_screen.dart` | AI assistant conversation |
+| `lib/screens/profile_screen.dart` | Profile & settings |
+| `lib/screens/sources_screen.dart` | Job sources |
 
-A few resources to get you started if this is your first Flutter project:
+## Networking
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+`lib/services/api_config.dart` discovers the backend host (explicit override → stored URL →
+probe of known candidates), so a VPN/LAN/emulator topology is handled without a rebuild.
+Pass an explicit base URL at build time:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+flutter pub get
+flutter run --dart-define=API_BASE_URL=http://<host>:8081
+```
+
+## Structure
+
+```
+lib/
+├── main.dart
+├── app_state.dart
+├── screens/        # feature screens
+├── services/       # API host discovery + typed API client
+├── theme/
+├── utils/
+└── widgets/        # shared UI building blocks
+```

@@ -89,8 +89,9 @@ flowchart LR
 - **Relevance scoring & band pruning** — an LLM-assisted relevance worker scores offers, keeps
   an un-judged "band" with a TTL, and prunes the noise.
 - **On-demand document generation** — "adapter &lt;ref&gt;" (chat, or the *Adapter* button)
-  queues a task that runs the LaTeX pipeline (`tailored/gen_tailored.py`) and produces a
-  **1-page tailored CV + cover letter** PDF per offer, stored in a Docker volume.
+  queues a task that runs a LaTeX pipeline and produces a **1-page tailored CV + cover letter**
+  PDF per offer, stored in a Docker volume (the generator and master documents are kept private
+  — see below).
 - **AI assistant ("hotline")** — the app chat can route to a headless AI coding agent that
   inspects the live system and runs actions (adapter, apply, status queries), with a streaming
   progress UX and deterministic safety for apply flows.
@@ -110,7 +111,6 @@ flowchart LR
 │   ├── daemon/              # host workers: supervisor, scrapers, task/chat workers
 │   └── jobcenter/           # Flutter application
 ├── dashboard/               # vanilla-JS SPA + zero-dep static/proxy server
-├── tailored/                # LaTeX CV/letter generator (gen_tailored.py) + payloads
 ├── scripts/                 # ops helpers (skeleton check, purge, audits)
 ├── Dockerfile.api           # API image (Node 24)
 ├── docker-compose.yml       # postgres · redis · api · nginx · (optional cloudflared)
@@ -188,10 +188,15 @@ docker compose --profile cloudflare up -d
 
 ## CV/letter pipeline
 
-`tailored/gen_tailored.py` takes an offer payload and emits a tailored CV + letter. The
-master documents keep a **frozen skeleton** (layout, section order, contact block) while only
-the content inside explicit `%%%TXR-…%%%` markers adapts to the offer — enforced by
-`scripts/check_skeleton.js` so tailored output can never drift from the 1-page master.
+The document generator takes an offer payload and emits a tailored CV + letter (LaTeX →
+PDF). The master documents keep a **frozen skeleton** (layout, section order, contact block)
+while only the content inside explicit `%%%TXR-…%%%` markers adapts to the offer, and
+`scripts/check_skeleton.js` enforces this so tailored output can never drift from the 1-page
+master.
+
+> The generator itself and the master CV/letter sources are **not** in this repository: they
+> embed the author's personal profile, contact details and prose. Only the skeleton-checking
+> tooling is published.
 
 ---
 
